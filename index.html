@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Af1cionados TV Premium</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:Arial,sans-serif;background:#111;color:white;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+        .header{background:#000;color:white;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #00ff00;position:fixed;top:0;left:0;width:100%;z-index:1000;height:56px;box-shadow:0 2px 15px rgba(0,255,0,0.4)}
+        .header-logo{width:44px;height:44px;border:3px solid #00ff00;border-radius:50%;overflow:hidden;box-shadow:0 0 15px #00ff00,0 0 30px #00ff00}
+        .header-logo img{width:100%;height:100%;object-fit:contain}
+        .header-title{flex-grow:1;text-align:center;font-size:1.35em;padding-left:10px}
+        .header-logo-placeholder{width:44px;height:44px}
+        .main-content{flex-grow:1;padding:20px;padding-top:68px}
+        .iframe-container{width:100%;padding-top:56.25%;position:relative;margin-bottom:24px;background:black;border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(0,255,0,0.4)}
+        .iframe-container iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+        .search-container{margin-bottom:20px}
+        .search-container input{width:100%;padding:14px;font-size:1.1em;border:2px solid #ddd;border-radius:10px;background:#222;color:white}
+        .channels-list{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;padding:10px 0}
+        .channel-item{text-align:center;width:118px;padding:12px 8px;border-radius:14px;background:#222;box-shadow:0 4px 12px rgba(0,255,0,0.2);transition:all .3s}
+        .channel-item:hover{transform:translateY(-6px);box-shadow:0 12px 25px rgba(0,255,0,0.5)}
+        .channel-logo{width:70px;height:70px;margin:0 auto 10px;border:4px solid #00ff00;border-radius:50%;overflow:hidden;box-shadow:0 0 20px #00ff00,0 0 35px #00ff00;background:transparent}
+        .channel-logo img{width:92%;height:92%;object-fit:contain}
+        .channel-name{font-size:0.84em;color:#0f0;margin-bottom:8px;font-weight:bold;line-height:1.2;word-break:break-word}
+        .btn-canal-action{background:#28a745;color:white;border:none;padding:9px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:0.92em;width:100%;transition:.3s}
+        .btn-canal-action:hover{background:#218838;transform:scale(1.05)}
+        .footer{background:#000;color:#0f0;text-align:center;padding:16px;font-size:0.9em}
+
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:none;align-items:center;justify-content:center;z-index:9999}
+        .modal-content{background:#111;border:2px solid #00ff00;border-radius:16px;padding:20px;width:90%;max-width:420px;box-shadow:0 0 30px rgba(0,255,0,0.6);position:relative}
+        .modal-header{text-align:center;margin-bottom:20px}
+        .modal-header h3{color:#0f0;font-size:1.4em}
+        .server-list{margin:15px 0}
+        .server-btn{display:block;width:100%;padding:14px;margin:8px 0;background:#222;border:2px solid #333;border-radius:10px;color:white;text-align:center;cursor:pointer;transition:all .3s;font-weight:bold}
+        .server-btn:hover{background:#00ff00;color:black;transform:scale(1.03);box-shadow:0 0 15px #00ff00}
+        .close-modal{position:absolute;top:10px;right:15px;font-size:2em;cursor:pointer;color:#0f0}
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-logo">
+        <img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png" alt="Af1cionados">
+    </div>
+    <h1 class="header-title">Af1cionados TV Premium + VPN</h1>
+    <div class="header-logo-placeholder"></div>
+</header>
+
+<div class="main-content">
+    <!-- SIN SANDBOX = NUNCA MÁS "Remove sandbox" -->
+    <div class="iframe-container" id="player-container">
+        <iframe id="main-player" 
+                src="about:blank"
+                allowfullscreen 
+                allow="encrypted-media" 
+                referrerpolicy="no-referrer" 
+                loading="lazy">
+        </iframe>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Buscar canales..." onkeyup="filterChannels()">
+    </div>
+
+    <div class="channels-list" id="channels-list">
+
+        <!-- TUS 100 CANALES ACTUALIZADOS -->
+        <div class="channel-item" data-id="445" data-name="TNT Sports 1 UK -1"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -1</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="521" data-name="TNT Sports 1 UK -2"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -2</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="177" data-name="# Vamos"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name"># Vamos</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="108" data-name="TNT Sports 1 UK -4"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -4</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="2" data-name="TNT Sports 1 UK -5"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -5</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="177" data-name="TNT Sports 1 UK -6"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -6</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="7" data-name="TNT Sports 1 UK -7"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -7</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="8" data-name="TNT Sports 1 UK -8"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -8</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="9" data-name="TNT Sports 1 UK -9"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -9</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="10" data-name="TNT Sports 1 UK -10"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -10</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="11" data-name="TNT Sports 1 UK -11"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -11</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="12" data-name="TNT Sports 1 UK -12"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -12</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="13" data-name="TNT Sports 1 UK -13"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -13</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="14" data-name="TNT Sports 1 UK -14"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -14</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="15" data-name="TNT Sports 1 UK -15"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -15</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="16" data-name="TNT Sports 1 UK -16"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -16</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="17" data-name="TNT Sports 1 UK -17"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -17</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="18" data-name="TNT Sports 1 UK -18"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -18</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="19" data-name="TNT Sports 1 UK -19"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -19</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="20" data-name="TNT Sports 1 UK -20"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -20</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="21" data-name="TNT Sports 1 UK -21"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -21</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="22" data-name="TNT Sports 1 UK -22"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -22</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="23" data-name="TNT Sports 1 UK -23"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -23</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="24" data-name="TNT Sports 1 UK -24"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -24</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="25" data-name="TNT Sports 1 UK -25"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -25</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="26" data-name="TNT Sports 1 UK -26"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -26</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="27" data-name="TNT Sports 1 UK -27"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -27</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="28" data-name="TNT Sports 1 UK -28"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -28</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="29" data-name="TNT Sports 1 UK -29"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -29</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="30" data-name="TNT Sports 1 UK -30"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -30</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="31" data-name="TNT Sports 1 UK -31"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -31</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="32" data-name="TNT Sports 2 UK -32"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 2 UK -32</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="33" data-name="TNT Sports 3 UK -33"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 3 UK -33</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="34" data-name="TNT Sports 4 UK -34"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 4 UK -34</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="35" data-name="Sky Sports Football UK -35"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sky Sports Football UK -35</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="36" data-name="Sky Sports Arena UK -36"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sky Sports Arena UK -36</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="37" data-name="Sky Sports Action UK -37"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sky Sports Action UK -37</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="38" data-name="Sky Sports Main Event -38"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sky Sports Main Event -38</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="39" data-name="Fox Sports 1 USA -39"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Fox Sports 1 USA -39</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="40" data-name="Tennis Channel -40"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Tennis Channel -40</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="41" data-name="EuroSport 1 UK -41"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">EuroSport 1 UK -41</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="42" data-name="EuroSport 2 UK -42"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">EuroSport 2 UK -42</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="43" data-name="DAZN LaLiga 2 -43"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">DAZN LaLiga 2 -43</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="44" data-name="ESPN USA -44"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">ESPN USA -44</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="45" data-name="ESPN2 USA -45"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">ESPN2 USA -45</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="46" data-name="beIN Sports MENA English 3 -46"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA English 3 -46</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="47" data-name="Polsat Sport Poland -47"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Polsat Sport Poland -47</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="48" data-name="Canal+ Sport Poland -48"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Canal+ Sport Poland -48</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="49" data-name="Sport TV1 Portugal -49"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sport TV1 Portugal -49</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="50" data-name="Polsat Sport Extra Poland -50"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Polsat Sport Extra Poland -50</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="51" data-name="ABC USA -51"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">ABC USA -51</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="52" data-name="CBS USA -52"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">CBS USA -52</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="53" data-name="NBC USA -53"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">NBC USA -53</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="54" data-name="FOX USA -54"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">FOX USA -54</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="55" data-name="TNT Sports 1 UK -55"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -55</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="56" data-name="Supersport Football -56"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Supersport Football -56</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="57" data-name="EuroSport 1 Poland -57"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">EuroSport 1 Poland -57</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="58" data-name="EuroSport 2 Poland -58"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">EuroSport 2 Poland -58</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="59" data-name="CANAL-59"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">CANAL-59</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="60" data-name="Sky Sports F1 UK -60"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sky Sports F1 UK -60</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="61" data-name="beIN Sports MENA English 1 -61"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA English 1 -61</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="62" data-name="beIN SPORTS 1 Turkey -62"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN SPORTS 1 Turkey -62</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="63" data-name="beIN SPORTS 2 Turkey -63"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN SPORTS 2 Turkey -63</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="64" data-name="beIN SPORTS 3 Turkey -64"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN SPORTS 3 Turkey -64</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="65" data-name="Sky Sports Cricket -65"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sky Sports Cricket -65</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="66" data-name="TUDN USA -66"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TUDN USA -66</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="67" data-name="beIN SPORTS 4 Turkey -67"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN SPORTS 4 Turkey -67</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="68" data-name="MULTI SPORT -68"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">MULTI SPORT -68</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="69" data-name="MULTI SPORT -69"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">MULTI SPORT -69</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="70" data-name="Sky Sports Golf UK -70"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sky Sports Golf UK -70</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="71" data-name="Eleven Sports 1 Poland -71"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Eleven Sports 1 Poland -71</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="72" data-name="Eleven Sports 2 Poland -72"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Eleven Sports 2 Poland -72</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="73" data-name="Canal+ Sport 2 Poland -73"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Canal+ Sport 2 Poland -73</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="74" data-name="Sport TV2 Portugal -74"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Sport TV2 Portugal -74</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="75" data-name="CANAL+ SPORT 5 Poland -75"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">CANAL+ SPORT 5 Poland -75</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="76" data-name="TNT Sports 1 UK -76"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -76</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="77" data-name="TNT Sports 1 UK -77"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -77</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="78" data-name="SporTV Brasil -78"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">SporTV Brasil -78</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="79" data-name="SporTV2 Brasil -79"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">SporTV2 Brasil -79</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="80" data-name="SporTV3 Brasil -80"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">SporTV3 Brasil -80</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="81" data-name="ESPN Brasil -81"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">ESPN Brasil -81</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="82" data-name="ESPN2 Brasil -82"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">ESPN2 Brasil -82</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="83" data-name="ESPN3 Brasil -83"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">ESPN3 Brasil -83</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="84" data-name="Movistar Laliga -84"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Movistar Laliga -84</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="85" data-name="ESPN4 Brasil -85"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">ESPN4 Brasil -85</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="86" data-name="TNT Sports 1 UK -86"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Sports 1 UK -86</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="87" data-name="TNT Brasil -87"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">TNT Brasil -87</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="88" data-name="Premier Brasil -88"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Premier Brasil -88</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="89" data-name="Combate Brasil -89"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">Combate Brasil -89</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="90" data-name="beIN Sports MENA English 2 -90"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA English 2 -90</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="91" data-name="beIN Sports MENA 1 -91"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA 1 -91</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="92" data-name="beIN Sports MENA 2 -92"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA 2 -92</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="93" data-name="beIN Sports MENA 3 -93"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA 3 -93</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="94" data-name="beIN Sports MENA 4 -94"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA 4 -94</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="95" data-name="beIN Sports MENA 5 -95"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA 5 -95</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="96" data-name="beIN Sports MENA 6 -96"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA 6 -96</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="97" data-name="beIN Sports MENA 7 -97"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA 7 -97</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="98" data-name="beIN Sports MENA Premium 1 -98"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA Premium 1 -98</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="99" data-name="beIN Sports MENA Premium 2 -99"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA Premium 2 -99</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+        <div class="channel-item" data-id="100" data-name="beIN Sports MENA Premium 3 -100"><div class="channel-logo"><img src="https://i.postimg.cc/P5CL0ncC/logo11-17-205545.png"></div><div class="channel-name">beIN Sports MENA Premium 3 -100</div><button class="btn-canal-action" onclick="openServerModal(this)">VER CANAL</button></div>
+
+    </div>
+</div>
+
+<footer class="footer">
+    <p>Af1cionados TV Premium © 2025 · 100% sin anuncios ni ventanas</p>
+</footer>
+
+<!-- Modal servidores -->
+<div class="modal-overlay" id="serverModal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">×</span>
+        <div class="modal-header">
+            <h3 id="modalChannelName">Selecciona servidor</h3>
+        </div>
+        <div class="server-list" id="serverList"></div>
+    </div>
+</div>
+
+<script>
+    const servidores = [
+        {name: "Servidor-1 › MizTV", url: "https://miztv.top/total/stream-{id}.php"},
+        {name: "Servidor-2 › DaddyHD", url: "https://daddyhd.com/embed/stream-{id}.php"},
+        {name: "Servidor-3 › YeahStreams", url: "https://yeahstreams.com/plus/stream-{id}.php"},
+        {name: "Servidor-4 › DaddyLive", url: "https://daddylives.top/embed/stream-{id}.php"},
+        {name: "Servidor-5 › FootyHunter", url: "https://footyhunterhd.shop/mpd/tvfto.php?sTLd?id={id}"},
+        {name: "Servidor-6 › TVC", url: "https://tvcstreams.pl/player/tvfhd.php?sTL1?id={id}"},
+        {name: "Servidor-7 › EpicPlay", url: "https://epicplayplay.cfd/premiumtv/yeahstreams.php?id={id}"}
+    ];
+
+    let currentChannelId = null;
+    let currentChannelName = null;
+
+    function openServerModal(button) {
+        const item = button.closest('.channel-item');
+        currentChannelId = item.getAttribute('data-id');
+        currentChannelName = item.getAttribute('data-name');
+
+        document.getElementById('modalChannelName').textContent = currentChannelName;
+
+        const serverList = document.getElementById('serverList');
+        serverList.innerHTML = '';
+
+        servidores.forEach(serv => {
+            const btn = document.createElement('div');
+            btn.className = 'server-btn';
+            btn.textContent = serv.name;
+            btn.onclick = () => loadChannel(serv.url.replace('{id}', currentChannelId), currentChannelName);
+            serverList.appendChild(btn);
+        });
+
+        document.getElementById('serverModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('serverModal').style.display = 'none';
+    }
+
+    function loadChannel(url, name) {
+        const container = document.getElementById('player-container');
+        container.innerHTML = `<iframe id="main-player" 
+                                    src="${url}?disableads=1&no-reload=1&autoplay=1" 
+                                    allowfullscreen allow="encrypted-media" 
+                                    referrerpolicy="no-referrer" loading="lazy"></iframe>`;
+
+        document.querySelector('.header-title').innerText = name;
+        closeModal();
+
+        setTimeout(() => {
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            const pos = container.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({top: pos - headerHeight - 10, behavior: 'smooth'});
+        }, 300);
+    }
+
+    function filterChannels() {
+        const filter = document.getElementById('search-input').value.toLowerCase();
+        const items = document.getElementsByClassName('channel-item');
+        for (let item of items) {
+            const text = item.querySelector('.channel-name').innerText.toLowerCase();
+            item.style.display = text.includes(filter) ? '' : 'none';
+        }
+    }
+
+    // Bloqueo de pop-ups sin romper nada
+    window.open = function() { return null; };
+    document.addEventListener('click', e => {
+        if (e.target.tagName === 'A') e.preventDefault();
+    });
+
+    window.onclick = function(e) {
+        if (e.target === document.getElementById('serverModal')) closeModal();
+    }
+</script>
+</body>
+</html>
